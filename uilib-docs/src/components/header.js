@@ -14,9 +14,9 @@ const Header = () => {
 
 
       <div className="links">
-        <Link to="/docs/">Docs</Link>
+        <Link to="/getting-started/setup">Docs</Link>
         <a target="_blank" href="https://github.com/wix/react-native-ui-lib">
-          Github
+          GitHub
         </a>
         <a target="_blank" href="https://github.com/wix/react-native-ui-lib/wiki">
           Wiki

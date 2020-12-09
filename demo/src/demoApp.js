@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import {Navigation} from 'react-native-navigation';
 import * as Animatable from 'react-native-animatable';
-import {AnimatableManager, ThemeManager, Constants, Assets, Colors, Typography} from 'react-native-ui-lib'; //eslint-disable-line
+import {AnimatableManager, Constants, Colors, Typography} from 'react-native-ui-lib'; // eslint-disable-line
 import {registerScreens} from './screens';
 
 
@@ -16,16 +16,6 @@ import {registerScreens} from './screens';
 //   gold: '#FFD700',
 // });
 
-// ThemeManager.setTheme({
-//   primaryColor: Colors.purple30,
-//   CTA: {
-//     backgroundColor: Colors.purple30,
-//     textColor: Colors.dark10,
-//   },
-//   titleColor: Colors.blue10,
-//   subtitleColor: Colors.blue40,
-// });
-
 // ThemeManager.setComponentTheme('Picker', (props) => {
 //   if (props.useNativePicker) {
 //     return {
@@ -35,10 +25,6 @@ import {registerScreens} from './screens';
 //       },
 //     };
 //   }
-// });
-
-// Assets.loadAssetsGroup('icons.general', {
-//   camera: require('./assets/icons/cameraSelected.png'),
 // });
 
 // AnimatableManager.loadAnimationPresets({
@@ -60,22 +46,23 @@ import {registerScreens} from './screens';
 //   customAnimation1: {
 //     from: {opacity: 0, translateY: 20},
 //     to: {opacity: 1, translateY: 0},
-//   }, 
+//   },
 //   customAnimation2: {
 //     from: {opacity: 0, translateY: 40},
 //     to: {opacity: 1, translateY: 0},
 //   },
 // };
 // IMPORTANT! Make uilib's animations available globally for the app's use (option to pass adittional animation definitions)
-Animatable.initializeRegistryWithDefinitions(AnimatableManager.loadAnimationDefinitions(/** customAnimationsDefinitions */)); 
-
+Animatable.initializeRegistryWithDefinitions(
+  AnimatableManager.loadAnimationDefinitions(/** customAnimationsDefinitions */)
+);
 
 function getDefaultNavigationStyle() {
   return {
     statusBar: {
       visible: true,
       style: 'light',
-      backgroundColor: ThemeManager.primaryColor, // for Android
+      backgroundColor: Colors.primary // for Android
     },
     layout: {
       backgroundColor: Colors.white,
@@ -86,30 +73,29 @@ function getDefaultNavigationStyle() {
       noBorder: true, // for iOS
       elevation: 0, // for Android
       background: {
-        color: ThemeManager.primaryColor,
+        color: Colors.primary
       },
       title: {
         color: Colors.white,
-        fontSize: Typography.text70.fontSize,
-        fontFamily: Constants.isAndroid ? 'sans-serif-bold' : '.SFUIText-Heavy',
-        alignment: 'center',
+        fontSize: Typography.text60H.fontSize,
+        fontFamily: Typography.text65H.fontFamily
       },
       subtitle: {
         color: Colors.white,
-        fontSize: Typography.text80.fontSize,
-        fontFamily: Constants.isAndroid ? Typography.text80.fontFamily : '.SFUIText-Medium',
+        fontSize: Typography.text80T.fontSize,
+        fontFamily: Typography.text80.fontFamily
       },
       backButton: {
         // visible: true,
         color: Colors.white,
         showTitle: Constants.isIOS ? false : undefined,
-        testID: 'pop',
+        testID: 'pop'
       },
-      leftButtonColor: Colors.white, 
+      leftButtonColor: Colors.white,
       leftButtonDisabledColor: Colors.rgba(Colors.white, 0.6),
-      rightButtonColor: Colors.white, 
-      rightButtonDisabledColor: Colors.rgba(Colors.white, 0.6),
-    },
+      rightButtonColor: Colors.white,
+      rightButtonDisabledColor: Colors.rgba(Colors.white, 0.6)
+    }
   };
 }
 
@@ -126,22 +112,22 @@ function startApp(defaultScreen) {
               options: {
                 topBar: {
                   title: {
-                    text: 'UILIB',
-                  },
-                },
-              },
-            },
-          },
-        ],
-      },
-    },
+                    text: 'R N U I L I B'
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
   };
 
   if (defaultScreen) {
     rootObject.root.stack.children.push({
       component: {
-        name: defaultScreen,
-      },
+        name: defaultScreen
+      }
     });
   }
 
@@ -159,6 +145,6 @@ async function getDefaultScreenAndStartApp() {
 }
 
 Navigation.events().registerAppLaunchedListener(() => {
-  registerScreens();
+  registerScreens(Navigation.registerComponent.bind(Navigation));
   getDefaultScreenAndStartApp();
 });

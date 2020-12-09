@@ -1,12 +1,11 @@
 // TODO: support commented props
 import React, {PureComponent} from 'react';
-import {StyleSheet, processColor} from 'react-native';
+import {StyleSheet, processColor, Text as RNText} from 'react-native';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Reanimated from 'react-native-reanimated';
 import {State} from 'react-native-gesture-handler';
 import {Colors, Typography, Spacings} from '../../style';
-import Text from '../../components/text';
 import Badge from '../../components/badge';
 import TouchableOpacity from '../TouchableOpacity';
 
@@ -21,7 +20,7 @@ const DEFAULT_SELECTED_LABEL_COLOR = Colors.blue30;
  * @notes: Must be rendered as a direct child of TabController.TabBar.
  */
 export default class TabBarItem extends PureComponent {
-  static displayName = 'TabController.TabBarItem';
+  static displayName = 'IGNORE';
 
   static propTypes = {
     /**
@@ -31,7 +30,7 @@ export default class TabBarItem extends PureComponent {
     /**
      * custom label style
      */
-    labelStyle: Text.propTypes.style,
+    labelStyle: RNText.propTypes.style,
     /**
      * the default label color
      */
@@ -128,7 +127,6 @@ export default class TabBarItem extends PureComponent {
 
   onPress = () => {
     const {index, onPress} = this.props;
-    _.invoke(this.props, 'onChangeIndex', index);
     onPress(index);
   };
 
@@ -156,7 +154,7 @@ export default class TabBarItem extends PureComponent {
   getLabelStyle() {
     const {itemWidth} = this.state;
     const {index, currentPage, labelColor, selectedLabelColor, labelStyle, ignore} = this.props;
-    const fontWeight = cond(and(eq(currentPage, index), defined(itemWidth)), '700', '300');
+    const fontWeight = cond(and(eq(currentPage, index), defined(itemWidth)), '700', '400');
     const activeColor = selectedLabelColor || DEFAULT_SELECTED_LABEL_COLOR;
     const inactiveColor = labelColor || DEFAULT_LABEL_COLOR;
     const color = cond(eq(currentPage, index),

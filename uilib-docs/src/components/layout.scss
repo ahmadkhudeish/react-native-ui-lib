@@ -13,12 +13,18 @@
     height: 100%;
     border: 20px solid $white;
     border-top: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 
-    .sidebar {
-    }
+  // .fill {
+  //   background: $primary;
+  // }
 
-    .content {
-      flex: 1;
+  .content {
+    width: 100%;
+    &.with-navbar {
+      padding-left: $navbarWidth;
     }
   }
 }

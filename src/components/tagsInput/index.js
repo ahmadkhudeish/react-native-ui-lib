@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ReactNative, {NativeModules, StyleSheet, ViewPropTypes, Image, DeviceEventEmitter} from 'react-native';
 import {Constants} from '../../helpers';
-import {Colors, BorderRadiuses, ThemeManager, Typography} from '../../style';
+import {Colors, BorderRadiuses, Typography} from '../../style';
 import Assets from '../../assets';
 import {BaseComponent} from '../../commons';
+import {LogService} from '../../services';
 import View from '../view';
 import TouchableOpacity from '../touchableOpacity';
 import {TextField} from '../inputs';
@@ -21,7 +22,7 @@ const GUTTER_SPACING = 8;
  * @description: Tags input component (chips)
  * @modifiers: Typography
  * @gif: https://camo.githubusercontent.com/9c2671024f60566b980638ea01b517f6fb509d0b/68747470733a2f2f6d656469612e67697068792e636f6d2f6d656469612f336f45686e374a79685431566658746963452f67697068792e676966
- * @example: https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/FormScreen.js
+ * @example: https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/ChipsInputScreen.js
  * @extends: TextField
  * @extendsLink: https://github.com/wix/react-native-ui-lib/blob/master/src/components/inputs/TextField.js
  */
@@ -30,7 +31,7 @@ export default class TagsInput extends BaseComponent {
 
   static propTypes = {
     /**
-     * list of tags. can be string or custom object when implementing getLabel
+     * list of tags. can be string boolean or custom object when implementing getLabel
      */
     tags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string])),
     /**
@@ -40,7 +41,7 @@ export default class TagsInput extends BaseComponent {
     /**
      * callback for custom rendering tag item
      */
-    renderTag: PropTypes.func,
+    renderTag: PropTypes.elementType,
     /**
      * callback for onChangeTags event
      */
@@ -53,6 +54,10 @@ export default class TagsInput extends BaseComponent {
      * callback for when pressing a tag in the following format (tagIndex, markedTagIndex) => {...}
      */
     onTagPress: PropTypes.func,
+    /**
+     * validation message error appears when tag isn't validate
+     */
+    validationErrorMessage: PropTypes.string,
     /**
      * if true, tags *removal* Ux won't be available
      */
@@ -87,6 +92,8 @@ export default class TagsInput extends BaseComponent {
   constructor(props) {
     super(props);
 
+    LogService.warn('TagsInput has been renamed to ChipsInput, please replace accordingly');
+
     this.addTag = this.addTag.bind(this);
     this.onChangeText = this.onChangeText.bind(this);
     this.renderTagWrapper = this.renderTagWrapper.bind(this);
@@ -105,6 +112,7 @@ export default class TagsInput extends BaseComponent {
   componentDidMount() {
     if (Constants.isAndroid) {
       const textInputHandle = ReactNative.findNodeHandle(this.input);
+
       if (textInputHandle && NativeModules.TextInputDelKeyHandler) {
         NativeModules.TextInputDelKeyHandler.register(textInputHandle);
         DeviceEventEmitter.addListener('onBackspacePress', this.onKeyPress);
@@ -210,7 +218,7 @@ export default class TagsInput extends BaseComponent {
     const tagsCount = _.size(tags);
     const keyCode = _.get(event, 'nativeEvent.key');
     const hasNoValue = _.isEmpty(value);
-    const pressedBackspace = Constants.isAndroid || keyCode === 'Backspace';
+    const pressedBackspace = Constants.isAndroid || keyCode === Constants.backspaceKey;
     const hasTags = tagsCount > 0;
 
     if (pressedBackspace) {
@@ -242,9 +250,17 @@ export default class TagsInput extends BaseComponent {
 
     return (
       <View row centerV>
-        {shouldMarkTag && <Image style={styles.removeIcon} source={Assets.icons.x}/>}
-        <Text style={[styles.tagLabel, typography]} accessibilityLabel={`${label} tag`}>
-          {shouldMarkTag ? 'Remove' : label}
+        {shouldMarkTag && (
+          <Image style={[styles.removeIcon, tag.invalid && styles.inValidTagRemoveIcon]} source={Assets.icons.x}/>
+        )}
+        <Text
+          style={[
+            tag.invalid ? (shouldMarkTag ? styles.errorMessageWhileMarked : styles.errorMessage) : styles.tagLabel,
+            typography
+          ]}
+          accessibilityLabel={`${label} tag`}
+        >
+          {!tag.invalid && shouldMarkTag ? 'Remove' : label}
         </Text>
       </View>
     );
@@ -254,6 +270,14 @@ export default class TagsInput extends BaseComponent {
     const {tagStyle, renderTag} = this.getThemeProps();
     const {tagIndexToRemove} = this.state;
     const shouldMarkTag = tagIndexToRemove === index;
+
+    if (tag.invalid) {
+      return (
+        <View key={index} style={[styles.inValidTag, tagStyle, shouldMarkTag && styles.inValidMarkedTag]}>
+          {this.renderLabel(tag, shouldMarkTag)}
+        </View>
+      );
+    }
 
     if (_.isFunction(renderTag)) {
       return renderTag(tag, index, shouldMarkTag, this.getLabel(tag));
@@ -298,7 +322,7 @@ export default class TagsInput extends BaseComponent {
           enableErrors={false}
           hideUnderline
           selectionColor={isLastTagMarked ? 'transparent' : selectionColor}
-          style={inputStyle}
+          style={[inputStyle, {textAlignVertical: 'center'}]}
           containerStyle={{flexGrow: 0}}
           collapsable={false}
           accessibilityHint={
@@ -310,9 +334,9 @@ export default class TagsInput extends BaseComponent {
   }
 
   render() {
-    const {disableTagRemoval, containerStyle, hideUnderline} = this.getThemeProps();
+    const {disableTagRemoval, containerStyle, hideUnderline, validationErrorMessage} = this.getThemeProps();
     const tagRenderFn = disableTagRemoval ? this.renderTag : this.renderTagWrapper;
-    const {tags} = this.state;
+    const {tags, tagIndexToRemove} = this.state;
 
     return (
       <View style={[!hideUnderline && styles.withUnderline, containerStyle]}>
@@ -320,6 +344,13 @@ export default class TagsInput extends BaseComponent {
           {_.map(tags, tagRenderFn)}
           {this.renderTextInput()}
         </View>
+        {validationErrorMessage ? (
+          <View>
+            <Text style={[styles.errorMessage, tagIndexToRemove && styles.errorMessageWhileMarked]}>
+              {validationErrorMessage}
+            </Text>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -336,11 +367,24 @@ export default class TagsInput extends BaseComponent {
     this.input.clear();
   }
 }
+const basicTagStyle = {
+  borderRadius: BorderRadiuses.br100,
+  paddingVertical: 4.5,
+  paddingHorizontal: 12,
+  marginRight: GUTTER_SPACING,
+  marginVertical: GUTTER_SPACING / 2
+};
+
+const basicIconStyle = {
+  width: 10,
+  height: 10,
+  marginRight: 6
+};
 
 const styles = StyleSheet.create({
   withUnderline: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: ThemeManager.dividerColor
+    borderColor: Colors.dark70
   },
   tagsList: {
     flexDirection: 'row',
@@ -353,23 +397,35 @@ const styles = StyleSheet.create({
   },
   tag: {
     backgroundColor: Colors.blue30,
-    borderRadius: BorderRadiuses.br100,
-    paddingVertical: 4.5,
-    paddingHorizontal: 12,
-    marginRight: GUTTER_SPACING,
-    marginVertical: GUTTER_SPACING / 2
+    ...basicTagStyle
+  },
+  inValidTag: {
+    borderWidth: 1,
+    borderColor: Colors.red30,
+    ...basicTagStyle
+  },
+  inValidMarkedTag: {
+    borderColor: Colors.red10
   },
   tagMarked: {
     backgroundColor: Colors.dark10
   },
   removeIcon: {
     tintColor: Colors.white,
-    width: 10,
-    height: 10,
-    marginRight: 6
+    ...basicIconStyle
+  },
+  inValidTagRemoveIcon: {
+    tintColor: Colors.red10
   },
   tagLabel: {
     ...Typography.text80,
     color: Colors.white
+  },
+  errorMessage: {
+    ...Typography.text80,
+    color: Colors.red30
+  },
+  errorMessageWhileMarked: {
+    color: Colors.red10
   }
 });

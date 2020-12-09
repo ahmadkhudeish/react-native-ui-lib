@@ -29,6 +29,8 @@ build/
 .gradle
 local.properties
 *.iml
+android/gradlew.bat
+expoDemo/android/gradlew.bat
 
 # node.js
 #
@@ -63,3 +65,6 @@ package-lock.json
 
 # CocoaPods
 /ios/Pods/
+/ios/Podfile.lock
+expoDemo/ios/Pods
+

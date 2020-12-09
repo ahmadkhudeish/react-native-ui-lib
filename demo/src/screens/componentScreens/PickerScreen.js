@@ -1,23 +1,25 @@
 import _ from 'lodash';
 import React, {Component} from 'react';
 import {ScrollView, Image} from 'react-native';
-import {View, Colors, Dialog, Text, Stepper, Typography, Picker, Avatar, Assets, TagsInput, PanningProvider} from 'react-native-ui-lib'; //eslint-disable-line
-import contacts from '../../data/conversations';
+import {View, Colors, Dialog, Text, Picker, Avatar, Assets, PanningProvider} from 'react-native-ui-lib'; //eslint-disable-line
+import contactsData from '../../data/conversations';
 import tagIcon from '../../assets/icons/tags.png';
 import dropdown from '../../assets/icons/chevronDown.png';
+
+const contacts = _.map(contactsData, c => ({...c, value: c.name, label: c.name}));
 
 const options = [
   {label: 'JavaScript', value: 'js'},
   {label: 'Java', value: 'java'},
   {label: 'Python', value: 'python'},
   {label: 'C++', value: 'c++', disabled: true},
-  {label: 'Perl', value: 'perl'},
+  {label: 'Perl', value: 'perl'}
 ];
 const filters = [
   {label: 'All', value: 0},
   {label: 'Draft', value: 1},
   {label: 'Published', value: 2},
-  {label: 'Scheduled', value: 3},
+  {label: 'Scheduled', value: 3}
 ];
 
 export default class PickerScreen extends Component {
@@ -28,13 +30,15 @@ export default class PickerScreen extends Component {
       itemsCount: 1,
       // language: {value: 'java', label: 'Java'},
       language: undefined,
+      language2: options[2].value, // for migrated picker example
       languages: [],
+      nativePickerValue: 'java',
       customModalValues: [],
       filter: filters[0],
       contact: contacts[0],
       tags: [{label: 'Amit'}, {label: 'Ethan'}],
       tags2: ['Tags', 'Input'],
-      tags3: ['Non', 'Removable', 'Tags'],
+      tags3: ['Non', 'Removable', 'Tags']
     };
   }
 
@@ -48,13 +52,16 @@ export default class PickerScreen extends Component {
   };
 
   renderDialog = modalProps => {
-    const {visible, toggleModal, children} = modalProps;
+    const {visible, children, toggleModal, onDone} = modalProps;
 
     return (
       <Dialog
         migrate
         visible={visible}
-        onDismiss={() => toggleModal(false)}
+        onDismiss={() => {
+          onDone();
+          toggleModal(false);
+        }}
         width="100%"
         height="45%"
         bottom
@@ -73,9 +80,7 @@ export default class PickerScreen extends Component {
     return (
       <ScrollView keyboardShouldPersistTaps="always">
         <View flex padding-20>
-          <Text text40>
-            Picker
-          </Text>
+          <Text text40>Picker</Text>
           <Picker
             placeholder="Favorite Language"
             floatingPlaceholder
@@ -90,24 +95,22 @@ export default class PickerScreen extends Component {
             // onSearchChange={value => console.warn('value', value)}
           >
             {_.map(options, option => (
-              <Picker.Item key={option.value} value={option} disabled={option.disabled} />
+              <Picker.Item key={option.value} value={option} disabled={option.disabled}/>
             ))}
           </Picker>
 
-          <View marginT-20>
-            <Picker
-              placeholder="Favorite Languages"
-              value={this.state.languages}
-              onChange={items => this.setState({languages: items})}
-              mode={Picker.modes.MULTI}
-              rightIconSource={dropdown}
-              hideUnderline
-            >
-              {_.map(options, option => (
-                <Picker.Item key={option.value} value={option} disabled={option.disabled} />
-              ))}
-            </Picker>
-          </View>
+          <Picker
+            marginT-20
+            placeholder="Favorite Languages"
+            value={this.state.languages}
+            onChange={items => this.setState({languages: items})}
+            mode={Picker.modes.MULTI}
+            rightIconSource={dropdown}
+          >
+            {_.map(options, option => (
+              <Picker.Item key={option.value} value={option} disabled={option.disabled}/>
+            ))}
+          </Picker>
 
           <Picker
             title="Native Picker"
@@ -117,7 +120,14 @@ export default class PickerScreen extends Component {
             onChange={nativePickerValue => this.setState({nativePickerValue})}
             rightIconSource={dropdown}
             containerStyle={{marginTop: 20}}
-            // renderNativePicker={(props) => {
+            // renderPicker={() => {
+            //   return (
+            //     <View>
+            //       <Text>Open Native Picker!</Text>
+            //     </View>
+            //   );
+            // }}
+            // renderNativePicker={props => {
             //   return (
             //     <View flex bg-red50>
             //       <Text>CUSTOM NATIVE PICKER</Text>
@@ -135,25 +145,24 @@ export default class PickerScreen extends Component {
             cancelLabelStyle={{color: Colors.violet30}}
           >
             {_.map(options, option => (
-              <Picker.Item key={option.value} value={option.value} label={option.label} disabled={option.disabled} />
+              <Picker.Item key={option.value} value={option.value} label={option.label} disabled={option.disabled}/>
             ))}
           </Picker>
 
-          <View marginT-20>
-            <Picker
-              title="Custom modal"
-              placeholder="Pick multiple Languages"
-              value={this.state.customModalValues}
-              onChange={items => this.setState({customModalValues: items})}
-              mode={Picker.modes.MULTI}
-              rightIconSource={dropdown}
-              renderCustomModal={this.renderDialog}
-            >
-              {_.map(options, option => (
-                <Picker.Item key={option.value} value={option} label={option.label} disabled={option.disabled} />
-              ))}
-            </Picker>
-          </View>
+          <Picker
+            marginT-20
+            title="Custom modal"
+            placeholder="Pick multiple Languages"
+            value={this.state.customModalValues}
+            onChange={items => this.setState({customModalValues: items})}
+            mode={Picker.modes.MULTI}
+            rightIconSource={dropdown}
+            renderCustomModal={this.renderDialog}
+          >
+            {_.map(options, option => (
+              <Picker.Item key={option.value} value={option} label={option.label} disabled={option.disabled}/>
+            ))}
+          </Picker>
 
           <Text marginT-20 marginB-10 text70 dark60>
             Custom Picker:
@@ -164,7 +173,7 @@ export default class PickerScreen extends Component {
             renderPicker={({label}) => {
               return (
                 <View row center>
-                  <Image style={{marginRight: 1, height: 16, resizeMode: 'contain'}} source={tagIcon} />
+                  <Image style={{marginRight: 1, height: 16, resizeMode: 'contain'}} source={tagIcon}/>
                   <Text dark10 text80>
                     {label} Posts
                   </Text>
@@ -173,7 +182,7 @@ export default class PickerScreen extends Component {
             }}
           >
             {_.map(filters, filter => (
-              <Picker.Item key={filter.value} value={filter} />
+              <Picker.Item key={filter.value} value={filter}/>
             ))}
           </Picker>
 
@@ -187,7 +196,7 @@ export default class PickerScreen extends Component {
             renderPicker={contact => {
               return (
                 <View row center>
-                  <Avatar size={30} imageSource={{uri: contact.thumbnail}} />
+                  <Avatar size={30} source={{uri: contact.thumbnail}}/>
                   <Text text70 marginL-10>
                     {contact.name}
                   </Text>
@@ -204,7 +213,7 @@ export default class PickerScreen extends Component {
                     style={{
                       height: 56,
                       borderBottomWidth: 1,
-                      borderColor: Colors.dark80,
+                      borderColor: Colors.dark80
                     }}
                     paddingH-15
                     row
@@ -212,16 +221,36 @@ export default class PickerScreen extends Component {
                     spread
                   >
                     <View row centerV>
-                      <Avatar size={35} imageSource={{uri: item.thumbnail}} />
+                      <Avatar size={35} source={{uri: item.thumbnail}}/>
                       <Text marginL-10 text70 dark10>
                         {item.name}
                       </Text>
                     </View>
-                    {props.isSelected && <Image source={Assets.icons.check} />}
+                    {props.isSelected && <Image source={Assets.icons.check}/>}
                   </View>
                 )}
                 getItemLabel={item => item.name}
               />
+            ))}
+          </Picker>
+
+          <Text text60 marginT-s5 marginB-s2>Migrated Picker</Text>
+
+          <Picker
+            migrate
+            title="Language"
+            placeholder="Favorite Language"
+            value={this.state.language2}
+            onChange={value => this.setState({language2: value})}
+            topBarProps={{title: 'Languages'}}
+            showSearch
+            searchPlaceholder={'Search a language'}
+            searchStyle={{color: Colors.blue30, placeholderTextColor: Colors.dark50}}
+            // mode={Picker.modes.MULTI}
+            // useNativePicker
+          >
+            {_.map(options, option => (
+              <Picker.Item key={option.value} value={option.value} label={option.label} disabled={option.disabled}/>
             ))}
           </Picker>
         </View>

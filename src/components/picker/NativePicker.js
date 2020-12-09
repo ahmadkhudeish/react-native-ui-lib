@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import React from 'react';
 import {BaseComponent} from '../../commons';
-import TextField from '../inputs/TextField';
+import TextField from '../textField';
 import {WheelPicker} from '../../nativeComponents';
 import PickerDialog from './PickerDialog';
 import TouchableOpacity from '../touchableOpacity';
-import View from '../view';
 import {Colors} from '../../style';
 
 class NativePicker extends BaseComponent {
+  static displayName = 'IGNORE';
   state = {
     selectedValue: this.props.value,
     items: this.extractPickerItems(this.props),
@@ -64,7 +64,7 @@ class NativePicker extends BaseComponent {
       <PickerDialog
         {...this.getThemeProps()}
         visible={showDialog}
-        disablePan
+        panDirection={null}
         onDismiss={this.onCancel}
         onValueChange={this.onValueChange}
         selectedValue={selectedValue}
@@ -80,12 +80,12 @@ class NativePicker extends BaseComponent {
     if (_.isFunction(renderPicker)) {
       const {selectedValue} = this.state;
       return (
-        <View left>
+        <>
           <TouchableOpacity {...customPickerProps} link onPress={() => this.toggleDialog(true)} testID={testID}>
             {renderPicker(selectedValue)}
           </TouchableOpacity>
           {this.renderPickerDialog()}
-        </View>
+        </>
       );
     }
 
@@ -95,7 +95,6 @@ class NativePicker extends BaseComponent {
       <TextField
         color={Colors.dark10}
         {...textInputProps}
-        enableErrors={false}
         value={label}
         expandable
         renderExpandable={this.renderPickerDialog}

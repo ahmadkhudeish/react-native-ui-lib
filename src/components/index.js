@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   get ActionBar() {
     return require('./actionBar').default;
   },
@@ -24,7 +24,10 @@ module.exports = {
     return require('./card').default;
   },
   get Carousel() {
-    return require('./carousel/carousel-Deprecated').default;
+    return require('./carousel').default;
+  },
+  get Chip() {
+    return require('./chip').default;
   },
   get Checkbox() {
     return require('./checkbox').default;
@@ -44,6 +47,15 @@ module.exports = {
   get Dialog() {
     return require('./dialog').default;
   },
+  get Drawer() {
+    return require('./drawer').default;
+  },
+  get ExpandableSection() {
+    return require('./expandableSection').default;
+  },
+  get Fader() {
+    return require('./fader').default;
+  },
   get FeatureHighlight() {
     return require('./featureHighlight').default;
   },
@@ -56,28 +68,35 @@ module.exports = {
   get Image() {
     return require('./image').default;
   },
-  
+  get KeyboardAwareScrollView() {
+    return require('./KeyboardAwareScrollView').KeyboardAwareScrollView;
+  },
+  get KeyboardAwareListView() {
+    return require('./KeyboardAwareScrollView').KeyboardAwareListView;
+  },
+  get KeyboardAwareFlatList() {
+    return require('./KeyboardAwareScrollView').KeyboardAwareFlatList;
+  },
   get BaseInput() {
-    return require('./inputs').BaseInput;
+    return require('./baseInput').default;
   },
   get TextArea() {
-    return require('./inputs').TextArea;
+    return require('./textArea').default;
   },
   get TextField() {
-    return require('./inputs').TextField;
-  },
-  get TextInput() {
-    return require('./inputs').TextInput;
+    return require('./textField').default;
   },
   get MaskedInput() {
-    return require('./inputs').MaskedInput;
+    return require('./maskedInput').default;
   },
-
+  get Modal() {
+    return require('./modal').default;
+  },
   get ListItem() {
     return require('./listItem').default;
   },
-  get Notification() {
-    return require('./notification').default;
+  get LoaderScreen() {
+    return require('./loaderScreen').default;
   },
   get PageControl() {
     return require('./pageControl').default;
@@ -100,19 +119,30 @@ module.exports = {
   get Picker() {
     return require('./picker').default;
   },
+  get DateTimePicker() {
+    return require('./dateTimePicker').default;
+  },
   get ProgressBar() {
     return require('./progressBar').default;
+  },
+  get StateScreen() {
+    return require('./stateScreen').default;
   },
   get Stepper() {
     return require('./stepper').default;
   },
+  get TabController() {
+    return require('./tabController').default;
+  },
   get TabBar() {
     return require('./tabBar').default;
   },
-  get TagsInput() {
+  get TagsInput() { // TODO: Renamed to ChipsInput, to be deleted after migration
     return require('./tagsInput').default;
   },
-
+  get ChipsInput() {
+    return require('./ChipsInput').default;
+  },
   get RadioButton() {
     return require('./radioButton').RadioButton;
   },
@@ -126,7 +156,6 @@ module.exports = {
   get StackAggregator() {
     return require('./stackAggregator').default;
   },
-
   get Slider() {
     return require('./slider').default;
   },
@@ -136,7 +165,6 @@ module.exports = {
   get ColorSliderGroup() {
     return require('./slider/ColorSliderGroup').default;
   },
-
   get Switch() {
     return require('./switch').default;
   },
@@ -149,13 +177,16 @@ module.exports = {
   get TouchableOpacity() {
     return require('./touchableOpacity').default;
   },
-  get Tour() {
-    return require('./tour').default;
-  },
   get View() {
     return require('./view').default;
   },
+  get Wizard() {
+    return require('./wizard').default;
+  },
   get WheelPickerDialog() {
     return require('./wheelPickerDialog').default;
+  },
+  get ScrollBar() {
+    return require('./scrollBar').default;
   }
 };

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import {BaseComponent} from '../../commons';
+import {extractComponentProps} from '../../commons/modifiers';
 import Dialog from '../dialog';
 import View from '../view';
 import Text from '../text';
@@ -11,6 +12,7 @@ import {Colors} from '../../style';
 import {WheelPicker} from '../../nativeComponents';
 
 class PickerDialog extends BaseComponent {
+  static displayName = 'IGNORE';
   static propTypes = {
     selectedValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     onValueChange: PropTypes.func,
@@ -27,10 +29,10 @@ class PickerDialog extends BaseComponent {
 
     return (
       <View style={styles.header}>
-        <Text text70 blue30 onPress={onCancel}>
+        <Text text70 blue30 onPress={onCancel} accessibilityRole={onCancel ? 'button' : undefined}>
           {_.get(topBarProps, 'cancelLabel', 'Cancel')}
         </Text>
-        <Text text70 blue30 onPress={onDone}>
+        <Text text70 blue30 onPress={onDone} accessibilityRole={onDone ? 'button' : undefined}>
           {_.get(topBarProps, 'doneLabel', 'Done')}
         </Text>
       </View>
@@ -50,7 +52,7 @@ class PickerDialog extends BaseComponent {
   }
 
   render() {
-    const dialogProps = Dialog.extractOwnProps(this.props);
+    const dialogProps = extractComponentProps(Dialog, this.props);
     return (
       <Dialog {...dialogProps} height={250} width="100%" migrate bottom animationConfig={{duration: 300}}>
         <View flex bg-white>

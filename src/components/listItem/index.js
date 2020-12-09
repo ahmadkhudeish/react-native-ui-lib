@@ -1,8 +1,6 @@
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {View as AnimatableView} from 'react-native-animatable';
 import {Colors} from '../../style';
 import {BaseComponent} from '../../commons';
 import TouchableOpacity from '../../components/touchableOpacity';
@@ -14,7 +12,7 @@ import ListItemPart from './ListItemPart';
  * @extends: TouchableOpacity
  * @extendslink: docs/TouchableOpacity
  * @gif: https://media.giphy.com/media/l1IBjHowyPcOTWAY8/giphy.gif
- * @example: https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/listScreens/BasicListScreen.js
+ * @example: https://github.com/wix/react-native-ui-lib/blob/master/demo/src/screens/componentScreens/BasicListScreen.js
  */
 class ListItem extends BaseComponent {
   static displayName = 'ListItem';
@@ -39,7 +37,7 @@ class ListItem extends BaseComponent {
     /**
      * The container element to wrap the ListItem
      */
-    containerElement: PropTypes.func
+    containerElement: PropTypes.elementType
   };
 
   static defaultProps = {
@@ -84,13 +82,6 @@ class ListItem extends BaseComponent {
     const pressedStyle = {backgroundColor: underlayColor};
     const Container = onPress || onLongPress ? containerElement : View;
 
-    const animationProps = this.extractAnimationProps();
-    const InnerContainer = !_.isEmpty(animationProps) ? AnimatableView : View;
-    if (!_.isEmpty(animationProps)) {
-      console.warn('ListItem component will soon stop supporting animationProps.' +
-          'Please wrap your ListItem component with your own animation component, such as Animatable.View',);
-    }
-
     return (
       <Container
         activeOpacity={1}
@@ -102,9 +93,7 @@ class ListItem extends BaseComponent {
         testID={testID}
         {...others}
       >
-        <InnerContainer {...animationProps} style={[this.styles.innerContainer, style, pressed && pressedStyle]}>
-          {this.props.children}
-        </InnerContainer>
+        <View style={[this.styles.innerContainer, style, pressed && pressedStyle]}>{this.props.children}</View>
       </Container>
     );
   }

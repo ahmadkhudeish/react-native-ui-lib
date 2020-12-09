@@ -6,7 +6,7 @@ import {Constants} from '../../helpers';
 import {Typography, Colors} from '../../style';
 import Assets from '../../assets';
 import {BaseComponent} from '../../commons';
-import {Modal} from '../../screensComponents';
+import Modal from '../modal';
 import View from '../view';
 import Image from '../image';
 
@@ -25,7 +25,7 @@ class PickerModal extends BaseComponent {
     }),
     searchPlaceholder: PropTypes.string,
     onSearchChange: PropTypes.func,
-    renderCustomSearch: PropTypes.func,
+    renderCustomSearch: PropTypes.elementType,
     listProps: PropTypes.object
   };
 

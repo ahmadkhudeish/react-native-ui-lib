@@ -10,7 +10,7 @@ import {BaseComponent} from '../../commons';
 import View from '../view';
 import Text from '../text';
 import Image from '../image';
-import Modal from '../../screensComponents/modal';
+import Modal from '../modal';
 
 const sideTip = require('./assets/hintTipSide.png');
 const middleTip = require('./assets/hintTipMiddle.png');
@@ -362,6 +362,7 @@ class Hint extends BaseComponent {
         >
           {this.renderHintTip()}
           <View
+            testID={`${testID}.message`}
             row
             centerV
             style={[styles.hint, color && {backgroundColor: color}, !_.isUndefined(borderRadius) && {borderRadius}]}
@@ -398,7 +399,7 @@ class Hint extends BaseComponent {
   }
 
   render() {
-    const {visible, onBackgroundPress} = this.props;
+    const {visible, onBackgroundPress, testID} = this.props;
 
     if (!visible) {
       return this.props.children;
@@ -414,6 +415,7 @@ class Hint extends BaseComponent {
             transparent
             onBackgroundPress={onBackgroundPress}
             onRequestClose={onBackgroundPress}
+            testID={`${testID}.modal`}
           >
             {this.renderHintContainer()}
           </Modal>
