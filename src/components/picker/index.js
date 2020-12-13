@@ -190,6 +190,12 @@ class Picker extends PureComponent {
     return null;
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      this.setState({ value: this.props.value });
+    }
+  }
+
   static extractPickerItems(props) {
     const {children} = props;
     const items = React.Children.map(children, child => ({value: child.props.value, label: child.props.label}));
